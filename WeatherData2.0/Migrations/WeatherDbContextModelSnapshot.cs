@@ -19,6 +19,39 @@ namespace WeatherData2._0.Migrations
                 .HasAnnotation("ProductVersion", "5.0.3")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("WeatherData2._0.Models.DayAvr", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<float>("IndoorHumidity")
+                        .HasColumnType("real");
+
+                    b.Property<int>("IndoorMold")
+                        .HasColumnType("int");
+
+                    b.Property<float>("IndoorTemperature")
+                        .HasColumnType("real");
+
+                    b.Property<float>("OutdoorHumidity")
+                        .HasColumnType("real");
+
+                    b.Property<int>("OutdoorMold")
+                        .HasColumnType("int");
+
+                    b.Property<float>("OutdoorTemperature")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DayAvrs");
+                });
+
             modelBuilder.Entity("WeatherData2._0.Models.Enviornment", b =>
                 {
                     b.Property<int>("Id")
@@ -32,8 +65,8 @@ namespace WeatherData2._0.Migrations
                     b.Property<int>("Humidity")
                         .HasColumnType("int");
 
-                    b.Property<string>("InsideOrOutside")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("InsideOrOutside")
+                        .HasColumnType("int");
 
                     b.Property<float>("Temperature")
                         .HasColumnType("real");

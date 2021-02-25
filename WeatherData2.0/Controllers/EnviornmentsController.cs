@@ -20,34 +20,66 @@ namespace WeatherData2._0.Controllers
         }
 
         // GET: Enviornments
+
+
         public async Task<IActionResult> Index(string sortOrder, string searchString, string searchString2)
         {
+
+
+
+
+
+
             ViewData["TempSortParm"] = sortOrder == "Temperature" ? "temp_desc" : "Temperature";
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
             ViewData["HumiditySortParm"] = sortOrder == "Humidity" ? "humidity_desc" : "Humidity";
-            ViewData["InsideOrOutsideSortParm"] = sortOrder == "InsideOrOutside" ? "insideoroutside_desc" : "InsideOrOutside";
-            ViewData["CurrentFilter"] = searchString;
-            ViewData["CurrentFilter2"] = searchString2;
+            ViewData["IndoorTemperatureSortParm"] = sortOrder == "IndoorTemperature" ? "indoortemperature_desc" : "IndoorTemperature";
+
+
+
+
+            //ViewData["InsideOrOutsideSortParm"] = sortOrder == "InsideOrOutside" ? "insideoroutside_desc" : "InsideOrOutside";
+            ViewData["CurrentFilter"] = searchString == "dayAverages" ? "dayaverages_desc" : "dayAverages";
+
+            //ViewData["CurrentFilter2"] = searchString2;
+
 
 
             var temps = from t in _context.Enviornments
                         select t;
-            var i = "inside".ToLower();
-            var o = "outside".ToLower();
+            //var i = "inside".ToLower();
+            //var o = "outside".ToLower();
 
-            if (searchString2 == i)
+            //if (searchString2 == i)
+            //{
+            //    temps = temps.Where(t => t.InsideOrOutside.Contains(i));
+            //}
+            //    if (searchString2 == o)
+            //    {
+            //        temps = temps.Where(t => t.InsideOrOutside.Contains(o));
+            //    }
+
+            if (searchString != null)
             {
-                temps = temps.Where(t => t.InsideOrOutside.Contains(i));
-            }
-            if (searchString2 == o)
-            {
-                temps = temps.Where(t => t.InsideOrOutside.Contains(o));
+
+                temps = temps.Where(t => t.Date.ToString().Contains(searchString));
+            
+                var dayAverages = from measure in temps
+                              group measure by new
+                              {
+                                  measure.Date  //.Date
+                              } into dayMeasurent
+                              select new DayAvr
+                              {
+                                  
+                                  Date = Convert.ToDateTime(searchString),
+                                  IndoorTemperature = dayMeasurent.Where(x => x.InsideOrOutside == 1).Average(x => x.Temperature),
+                                  IndoorHumidity = dayMeasurent.Where(x => x.InsideOrOutside == 1).Average(x => x.Temperature),
+                                  OutdoorTemperature = dayMeasurent.Where(x => x.InsideOrOutside == 2).Average(x => x.Temperature),
+                                  OutdoorHumidity = dayMeasurent.Where(x => x.InsideOrOutside == 2).Average(x => x.Temperature)
+                              };
             }
 
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                temps = temps.Where(t => t.Temperature.ToString().Contains(searchString));
-            }
             switch (sortOrder)
             {
                 case "temp_desc":
@@ -188,6 +220,11 @@ namespace WeatherData2._0.Controllers
             return View(enviornment);
         }
 
+
+
+
+
+
         // POST: Enviornments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -203,5 +240,13 @@ namespace WeatherData2._0.Controllers
         {
             return _context.Enviornments.Any(e => e.Id == id);
         }
+
+
     }
 }
+
+
+
+
+
+

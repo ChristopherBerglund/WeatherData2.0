@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WeatherData2._0.Models;
+using WeatherData2._0.Controllers;
 
 namespace WeatherData2._0
 {
@@ -13,6 +14,7 @@ namespace WeatherData2._0
     {
 
         public DbSet<Enviornment> Enviornments { get; set; }
+        public DbSet<DayAvr> DayAvrs { get; set; }
 
         public static void Initialize(WeatherDbContext context)
         {
@@ -25,7 +27,7 @@ namespace WeatherData2._0
 
                 //tempFixed1.csv = +150000 rows
                 //TempFixed2.csv = 1000 rows
-                string WeatherPath = "TempFixed1.csv";
+                string WeatherPath = "TempFixed2.csv";
                 List<string> weatherLines = File.ReadAllLines(WeatherPath)
                     .Skip(1)
                     .Distinct()
@@ -37,9 +39,7 @@ namespace WeatherData2._0
                 {
                     foreach (var line in weatherLines)
                     {
-
                         var weatherData = line.Split(';');
-
 
                         Enviornment env = new Enviornment();
                         try
@@ -47,9 +47,16 @@ namespace WeatherData2._0
                             env.Date = Convert.ToDateTime(weatherData[0]);
                             env.Humidity = Convert.ToInt32(weatherData[3]);
                             env.Temperature = (float)Convert.ToDouble(weatherData[2], commaCorrector);
-                            env.InsideOrOutside = weatherData[1];
+                            if(weatherData[1] == "Inne")
+                            {
+                                env.InsideOrOutside = 1;
+                            }
+                            else
+                            {
+                                env.InsideOrOutside = 2;
+                            }
                             context.Enviornments.Add(env);
-                            //Math.Round(averagesDoubles, 2);
+                           
                         }
                         catch (FormatException e)
                         {
@@ -84,6 +91,10 @@ namespace WeatherData2._0
 
 
         public WeatherDbContext(DbContextOptions<WeatherDbContext> options) : base(options) { }
+
+
+
+      
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
